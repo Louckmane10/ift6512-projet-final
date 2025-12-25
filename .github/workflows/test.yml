@@ -59,13 +59,13 @@ jobs:
           y = rand(0:1, n)
           costs = [0.0, 5.0, 10.0, 8.0, 15.0]
           
-          # Train model
-          model = LogisticModel(d)
-          fit_logistic!(model, X, y)
+          # Train model (use qualified name to avoid conflict)
+          model = SAADRO.LogisticModel(d)
+          SAADRO.fit_logistic!(model, X, y)
           println("✓ Logistic model trained")
           
           # Estimate Gaussian params
-          gp = estimate_gaussian_params(X)
+          gp = SAADRO.estimate_gaussian_params(X)
           println("✓ Gaussian parameters estimated")
           
           # Test scenario generation
