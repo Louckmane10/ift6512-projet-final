@@ -71,7 +71,7 @@ jobs:
           println("✓ Acquisition solved!")
           println("  Features to acquire: $(findall(result.z_optimal))")
           println("  Objective: $(round(result.objective, digits=4))")
-          println("  Cost: $(result.cost)")
+          println("  Cost: $(result.acquisition_cost)")
           
           # Test prediction
           pred = predict(model, x_test)
