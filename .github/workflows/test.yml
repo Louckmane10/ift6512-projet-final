@@ -26,6 +26,7 @@ jobs:
           using Pkg
           Pkg.add("Distributions")
           Pkg.add("Combinatorics")
+          Pkg.add("Optim")
         '
     
     - name: Run Experiment 1 (quick test)
