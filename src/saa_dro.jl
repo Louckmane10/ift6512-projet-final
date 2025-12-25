@@ -20,8 +20,13 @@ using .AcquisitionSolver
 using Statistics
 using Random
 
+# Re-export from submodules
 export DROConfig, DROResult, solve_dro_acquisition
 export fit_and_solve!, evaluate_policy, cross_validate_epsilon
+export LogisticModel, fit_logistic!, predict, logloss
+export ConditionalGaussian, generate_gaussian_scenarios, estimate_gaussian_params
+export solve_acquisition, solve_acquisition_exact, solve_acquisition_greedy
+export evaluate_dro_objective, evaluate_dro_objective_detailed
 
 #==============================================================================
 # Structures de configuration et résultats
@@ -437,14 +442,5 @@ function compare_with_baselines(model::LogisticModel,
     
     return results
 end
-
-#==============================================================================
-# Exports des sous-modules
-==============================================================================#
-
-# Re-export depuis les sous-modules
-export LogisticModel, fit_logistic!, predict, logloss
-export ConditionalGaussian, generate_gaussian_scenarios, estimate_gaussian_params
-export solve_acquisition, enumerate_feasible_solutions
 
 end # module
