@@ -20,6 +20,14 @@ jobs:
       with:
         version: '1.9'
     
+    - name: Install dependencies
+      run: |
+        julia -e '
+          using Pkg
+          Pkg.add("Distributions")
+          Pkg.add("Combinatorics")
+        '
+    
     - name: Run Experiment 1 (quick test)
       run: |
         julia --project=. -e '
