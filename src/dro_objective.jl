@@ -14,7 +14,7 @@ using LinearAlgebra
 using Statistics
 using Optim
 
-export evaluate_dro_objective, evaluate_standard_objective
+export evaluate_dro_objective, evaluate_dro_objective_detailed, evaluate_standard_objective
 export LogisticModel, fit_logistic!, predict, logloss
 export lipschitz_constant
 
