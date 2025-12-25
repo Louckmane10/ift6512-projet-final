@@ -36,21 +36,12 @@ jobs:
           println("Testing DRO Feature Acquisition")
           println("="^60)
           
-          # Include modules
-          include("src/utils.jl")
-          include("src/scenario_generation.jl")
-          include("src/dro_objective.jl")
-          include("src/acquisition_solver.jl")
+          # Include only SAADRO (it includes everything)
           include("src/saa_dro.jl")
-          
-          using .Utils
-          using .ScenarioGeneration
-          using .DROObjective
-          using .AcquisitionSolver
           using .SAADRO
           using Random, Statistics
           
-          println("\n✓ All modules loaded successfully")
+          println("\n✓ Module loaded successfully")
           
           # Quick test with synthetic data
           Random.seed!(42)
@@ -59,29 +50,29 @@ jobs:
           y = Float64.(rand(0:1, n))
           costs = [0.0, 5.0, 10.0, 8.0, 15.0]
           
-          # Train model (use qualified name to avoid conflict)
-          model = SAADRO.LogisticModel(d)
-          SAADRO.fit_logistic!(model, X, y)
+          # Train model
+          model = LogisticModel(d)
+          fit_logistic!(model, X, y)
           println("✓ Logistic model trained")
           
           # Estimate Gaussian params
-          gp = SAADRO.estimate_gaussian_params(X)
+          gp = estimate_gaussian_params(X)
           println("✓ Gaussian parameters estimated")
           
           # Test scenario generation
           x_test = X[1, :]
           mask = [false, true, true, false, true]
-          scenarios = ScenarioGeneration.generate_gaussian_scenarios(gp, x_test, mask, 50)
+          scenarios = generate_gaussian_scenarios(gp, x_test, mask, 50)
           println("✓ Generated $(length(scenarios)) scenarios")
           
           # Test DRO objective
           z = falses(d)
-          obj = DROObjective.evaluate_dro_objective(model, scenarios, x_test, mask, z, y[1], 0.1)
+          obj = evaluate_dro_objective(model, scenarios, x_test, mask, z, y[1], 0.1)
           println("✓ DRO objective evaluated: $(round(obj, digits=4))")
           
           # Test acquisition solver
-          config = SAADRO.DROConfig(ε=0.1, n_scenarios=50, verbose=false)
-          result = SAADRO.solve_dro_acquisition(model, gp, x_test, mask, y[1], costs, 20.0, config)
+          config = DROConfig(ε=0.1, n_scenarios=50, verbose=false)
+          result = solve_dro_acquisition(model, gp, x_test, mask, y[1], costs, 20.0, config)
           println("✓ Acquisition solved: z = $(result.z_optimal)")
           println("  Objective: $(round(result.objective, digits=4))")
           println("  Cost: $(result.cost)")
