@@ -293,7 +293,7 @@ end
 Calcule le coût total d'une décision d'acquisition.
 """
 function acquisition_cost(z::Vector{Bool}, costs::Vector{Float64})
-    return sum(costs[j] for j in 1:length(z) if z[j])
+    return sum((costs[j] for j in 1:length(z) if z[j]), init=0.0)
 end
 
 """
