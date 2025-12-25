@@ -13,6 +13,7 @@ module Utils
 using Statistics
 using Random
 using DelimitedFiles
+using Printf
 
 export load_pima_diabetes, load_heart_disease, download_uci_data
 export simulate_mcar, simulate_mar, simulate_mnar, simulate_mnar_threshold
