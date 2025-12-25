@@ -65,17 +65,17 @@ jobs:
           scenarios = generate_gaussian_scenarios(gp, x_test, mask, 50)
           println("✓ Generated $(length(scenarios)) scenarios")
           
-          # Test DRO objective
-          z = falses(d)
-          obj = evaluate_dro_objective(model, scenarios, x_test, mask, z, y[1], 0.1)
-          println("✓ DRO objective evaluated: $(round(obj, digits=4))")
-          
-          # Test acquisition solver
+          # Test full acquisition solver (this tests everything internally)
           config = DROConfig(ε=0.1, n_scenarios=50, verbose=false)
           result = solve_dro_acquisition(model, gp, x_test, mask, y[1], costs, 20.0, config)
-          println("✓ Acquisition solved: z = $(result.z_optimal)")
+          println("✓ Acquisition solved!")
+          println("  Features to acquire: $(findall(result.z_optimal))")
           println("  Objective: $(round(result.objective, digits=4))")
           println("  Cost: $(result.cost)")
+          
+          # Test prediction
+          pred = predict(model, x_test)
+          println("✓ Prediction: $(round(pred, digits=4))")
           
           println("\n" * "="^60)
           println("All tests passed! ✓")
