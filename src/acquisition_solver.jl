@@ -12,8 +12,8 @@ module AcquisitionSolver
 
 using Combinatorics
 
-export solve_acquisition_exact, solve_acquisition_greedy
-export enumerate_feasible_solutions, marginal_value
+export solve_acquisition, solve_acquisition_exact, solve_acquisition_greedy
+export enumerate_feasible_solutions, marginal_value, acquisition_cost
 
 #==============================================================================
 # Énumération des solutions admissibles
