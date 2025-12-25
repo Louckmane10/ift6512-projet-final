@@ -1,0 +1,88 @@
+name: Run Experiments
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Permet de lancer manuellement
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Julia
+      uses: julia-actions/setup-julia@v2
+      with:
+        version: '1.9'
+    
+    - name: Run Experiment 1 (quick test)
+      run: |
+        julia --project=. -e '
+          println("="^60)
+          println("Testing DRO Feature Acquisition")
+          println("="^60)
+          
+          # Include modules
+          include("src/utils.jl")
+          include("src/scenario_generation.jl")
+          include("src/dro_objective.jl")
+          include("src/acquisition_solver.jl")
+          include("src/saa_dro.jl")
+          
+          using .Utils
+          using .ScenarioGeneration
+          using .DROObjective
+          using .AcquisitionSolver
+          using .SAADRO
+          using Random, Statistics
+          
+          println("\n✓ All modules loaded successfully")
+          
+          # Quick test with synthetic data
+          Random.seed!(42)
+          n, d = 100, 5
+          X = randn(n, d)
+          y = rand(0:1, n)
+          costs = [0.0, 5.0, 10.0, 8.0, 15.0]
+          
+          # Train model
+          model = LogisticModel(d)
+          fit_logistic!(model, X, y)
+          println("✓ Logistic model trained")
+          
+          # Estimate Gaussian params
+          gp = estimate_gaussian_params(X)
+          println("✓ Gaussian parameters estimated")
+          
+          # Test scenario generation
+          x_test = X[1, :]
+          mask = [false, true, true, false, true]
+          scenarios = generate_gaussian_scenarios(gp, x_test, mask, 50)
+          println("✓ Generated $(length(scenarios)) scenarios")
+          
+          # Test DRO objective
+          z = falses(d)
+          obj = evaluate_dro_objective(model, scenarios, x_test, mask, z, y[1], 0.1)
+          println("✓ DRO objective evaluated: $(round(obj, digits=4))")
+          
+          # Test acquisition solver
+          config = DROConfig(ε=0.1, n_scenarios=50, verbose=false)
+          result = solve_dro_acquisition(model, gp, x_test, mask, y[1], costs, 20.0, config)
+          println("✓ Acquisition solved: z = $(result.z_optimal)")
+          println("  Objective: $(round(result.objective, digits=4))")
+          println("  Cost: $(result.cost)")
+          
+          println("\n" * "="^60)
+          println("All tests passed! ✓")
+          println("="^60)
+        '
+    
+    - name: Run full experiment (optional)
+      if: github.event_name == 'workflow_dispatch'
+      run: julia run_experiments.jl 1
+      timeout-minutes: 10
